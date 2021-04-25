@@ -135,6 +135,30 @@ class ReactNativePoolakeyModule(
     }
   }
 
+  @ReactMethod
+  fun getPurchasedProduct(promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getPurchasedProducts {
+        queryFailed { promise.reject(it) }
+        querySucceed {
+          // TODO convert list to json object
+        }
+      }
+    }
+  }
+
+  @ReactMethod
+  fun getSubscribedProduct(promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getSubscribedProducts {
+        queryFailed { promise.reject(it) }
+        querySucceed {
+          // TODO convert list to json object
+        }
+      }
+    }
+  }
+
   private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
     if (::payment.isInitialized) {
       promise.reject(IllegalStateException("payment not initialized"))
