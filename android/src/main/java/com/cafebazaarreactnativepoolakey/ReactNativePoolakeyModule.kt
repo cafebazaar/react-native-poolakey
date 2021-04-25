@@ -1,24 +1,53 @@
 package com.cafebazaarreactnativepoolakey
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
+import ir.cafebazaar.poolakey.Payment
+import ir.cafebazaar.poolakey.config.PaymentConfiguration
+import ir.cafebazaar.poolakey.config.SecurityCheck
+import ir.cafebazaar.poolakey.exception.DisconnectException
 
-class ReactNativePoolakeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class ReactNativePoolakeyModule(
+  private val reactContext: ReactApplicationContext
+) : ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String {
-        return "ReactNativePoolakey"
+  override fun getName(): String {
+    return "ReactNativePoolakey"
+  }
+
+  lateinit var payment: Payment
+
+  @ReactMethod
+  fun initializePayment(rsaPublicKey: String? = null) {
+
+    val securityCheck = if (rsaPublicKey == null) {
+      SecurityCheck.Disable
+    } else {
+      SecurityCheck.Enable(rsaPublicKey = rsaPublicKey)
+    }
+    val paymentConfig = PaymentConfiguration(localSecurityCheck = securityCheck)
+    payment = Payment(context = reactContext, config = paymentConfig)
+  }
+
+  @ReactMethod
+  fun connectPayment(promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.connect {
+        connectionSucceed { promise.resolve(null) }
+        connectionFailed { promise.reject(it) }
+        disconnected { promise.reject(DisconnectException()) }
+      }
+    }
+  }
+
+  private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
+    if (::payment.isInitialized) {
+      promise.reject(IllegalStateException("payment not initialized"))
+      return
     }
 
-    // Example method
-    // See https://reactnative.dev/docs/native-modules-android
-    @ReactMethod
-    fun multiply(a: Int, b: Int, promise: Promise) {
-    
-      promise.resolve(a * b)
-    
-    }
-
-    
+    runner.invoke()
+  }
 }
