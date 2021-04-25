@@ -1,6 +1,7 @@
 package com.cafebazaarreactnativepoolakey
 
 import android.app.Activity
+import android.content.Intent
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -98,6 +99,28 @@ class ReactNativePoolakeyModule(
       ) {
         failedToBeginFlow { promise.reject(it) }
         purchaseFlowBegan { promise.resolve(null) }
+      }
+    }
+  }
+
+  @ReactMethod
+  fun onActivityForResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?,
+    promise: Promise
+  ) {
+    runIfPaymentInitialized(promise) {
+      payment.onActivityResult(requestCode, resultCode, data) {
+        purchaseSucceed { purchaseEntity ->
+          promise.resolve(purchaseEntity.originalJson)
+        }
+        purchaseCanceled {
+          promise.resolve(null)
+        }
+        purchaseFailed { throwable ->
+          promise.reject(throwable)
+        }
       }
     }
   }
