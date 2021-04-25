@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import ir.cafebazaar.poolakey.Connection
 import ir.cafebazaar.poolakey.Payment
 import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
@@ -18,6 +19,7 @@ class ReactNativePoolakeyModule(
   }
 
   lateinit var payment: Payment
+  var paymentConnection: Connection? = null
 
   @ReactMethod
   fun initializePayment(rsaPublicKey: String? = null) {
@@ -34,12 +36,18 @@ class ReactNativePoolakeyModule(
   @ReactMethod
   fun connectPayment(promise: Promise) {
     runIfPaymentInitialized(promise) {
-      payment.connect {
+      paymentConnection = payment.connect {
         connectionSucceed { promise.resolve(null) }
         connectionFailed { promise.reject(it) }
         disconnected { promise.reject(DisconnectException()) }
       }
     }
+  }
+
+  @ReactMethod
+  fun disconnectPayment(promise: Promise) {
+    paymentConnection?.disconnect()
+    promise.resolve(null)
   }
 
   private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
