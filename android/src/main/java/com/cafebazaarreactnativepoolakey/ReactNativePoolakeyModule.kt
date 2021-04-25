@@ -1,5 +1,6 @@
 package com.cafebazaarreactnativepoolakey
 
+import android.app.Activity
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -9,6 +10,7 @@ import ir.cafebazaar.poolakey.Payment
 import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
 import ir.cafebazaar.poolakey.exception.DisconnectException
+import ir.cafebazaar.poolakey.request.PurchaseRequest
 
 class ReactNativePoolakeyModule(
   private val reactContext: ReactApplicationContext
@@ -48,6 +50,31 @@ class ReactNativePoolakeyModule(
   fun disconnectPayment(promise: Promise) {
     paymentConnection?.disconnect()
     promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun purchaseProduct(
+    productId: String,
+    developerPayload: String?,
+    requestCode: Int,
+    activity: Activity,
+    promise: Promise
+  ) {
+    runIfPaymentInitialized(promise) {
+      val purchaseRequest = PurchaseRequest(
+        productId,
+        requestCode,
+        developerPayload
+      )
+
+      payment.purchaseProduct(
+        activity,
+        purchaseRequest
+      ) {
+        failedToBeginFlow { promise.reject(it) }
+        purchaseFlowBegan { promise.resolve(null) }
+      }
+    }
   }
 
   private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
