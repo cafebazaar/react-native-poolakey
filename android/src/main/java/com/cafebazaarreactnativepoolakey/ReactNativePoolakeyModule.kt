@@ -125,6 +125,16 @@ class ReactNativePoolakeyModule(
     }
   }
 
+  @ReactMethod
+  fun consumePurchase(purchaseToken: String, promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.consumeProduct(purchaseToken) {
+        consumeFailed { promise.reject(it) }
+        consumeSucceed { promise.resolve(null) }
+      }
+    }
+  }
+
   private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
     if (::payment.isInitialized) {
       promise.reject(IllegalStateException("payment not initialized"))
