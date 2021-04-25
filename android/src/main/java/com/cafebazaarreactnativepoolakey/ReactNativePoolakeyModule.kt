@@ -21,8 +21,8 @@ class ReactNativePoolakeyModule(
     return "ReactNativePoolakey"
   }
 
-  lateinit var payment: Payment
-  var paymentConnection: Connection? = null
+  private lateinit var payment: Payment
+  private var paymentConnection: Connection? = null
 
   @ReactMethod
   fun initializePayment(rsaPublicKey: String? = null) {
