@@ -160,7 +160,7 @@ class ReactNativePoolakeyModule(
   }
 
   private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
-    if (::payment.isInitialized) {
+    if (::payment.isInitialized.not()) {
       promise.reject(IllegalStateException("payment not initialized"))
       return
     }
