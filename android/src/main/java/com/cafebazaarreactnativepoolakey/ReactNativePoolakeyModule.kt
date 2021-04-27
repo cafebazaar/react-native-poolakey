@@ -13,6 +13,7 @@ import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
 import ir.cafebazaar.poolakey.exception.DisconnectException
 import ir.cafebazaar.poolakey.request.PurchaseRequest
+import com.facebook.react.bridge.Callback
 
 class ReactNativePoolakeyModule(
   private val reactContext: ReactApplicationContext
@@ -24,10 +25,11 @@ class ReactNativePoolakeyModule(
 
   private var purchasePromise: Promise? = null
   private var paymentConnection: Connection? = null
+  private var onDisconnectHandler: Callback? = null
 
   @ReactMethod
-  fun initializePayment(rsaPublicKey: String? = null) {
-
+  fun initializePayment(rsaPublicKey: String? = null, onDisconnect: Callback) {
+    onDisconnectHandler = onDisconnect
     val securityCheck = if (rsaPublicKey == null) {
       SecurityCheck.Disable
     } else {
@@ -43,7 +45,7 @@ class ReactNativePoolakeyModule(
       paymentConnection = payment.connect {
         connectionSucceed { promise.resolve(null) }
         connectionFailed { promise.reject(it) }
-        disconnected { promise.reject(DisconnectException()) }
+        disconnected { onDisconnectHandler?.invoke() }
       }
     }
 
@@ -54,6 +56,7 @@ class ReactNativePoolakeyModule(
   fun disconnectPayment(promise: Promise) {
     paymentConnection?.disconnect()
     reactContext.removeActivityEventListener(this)
+    purchasePromise?.reject(DisconnectException())
     purchasePromise = null
     promise.resolve(null)
   }

@@ -24,6 +24,7 @@ export default function App() {
       // setResult(e.toString());
       setResult(e);
     }
+    await poolakey.disconnect();
   };
 
   const onGetPurchases = async () => {

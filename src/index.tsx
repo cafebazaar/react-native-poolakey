@@ -25,9 +25,13 @@ function parsePurchaseResult(json: string) {
   };
 }
 
+function disconnect() {
+  console.log('disconnected');
+}
+
 export default {
   initialize(rsaKey: string) {
-    ReactNativePoolakey.initializePayment(rsaKey);
+    ReactNativePoolakey.initializePayment(rsaKey, disconnect);
   },
   connect(): Promise<void> {
     return ReactNativePoolakey.connectPayment();
