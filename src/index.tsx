@@ -17,8 +17,12 @@ type PurchaseResult = {
   purchaseToken: string;
 };
 
-function parsePurchaseResult(json: string) {
-  const obj = JSON.parse(json);
+function parsePurchaseResult(json: any): any {
+  const obj = typeof json === 'string' ? JSON.parse(json) : json;
+  if (Array.isArray(obj)) {
+    return obj.map(parsePurchaseResult);
+  }
+
   return {
     ...obj,
     purchaseTime: new Date(obj.purchaseTime),
@@ -48,10 +52,7 @@ export default {
       developerPayload || null
     ).then(parsePurchaseResult);
   },
-  getPurchasedProducts(): Promise<any> {
-    return ReactNativePoolakey.getPurchasedProducts().then((arr: string) => {
-      // TODO: this is dirty!
-      return JSON.parse(arr).map(parsePurchaseResult);
-    });
+  getPurchasedProducts(): Promise<PurchaseResult[]> {
+    return ReactNativePoolakey.getPurchasedProducts().then(parsePurchaseResult);
   },
 };

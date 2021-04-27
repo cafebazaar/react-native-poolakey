@@ -5,11 +5,5 @@ import org.json.JSONArray
 
 fun List<PurchaseInfo>.toJsonString(): String {
   val originalsJson = map { it.originalJson }
-  val result = JSONArray().apply {
-    originalsJson.forEach {
-      put(it)
-    }
-  }
-
-  return result.toString()
+  return "[" + originalsJson.joinToString() + "]"
 }
