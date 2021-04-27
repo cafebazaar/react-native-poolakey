@@ -132,7 +132,7 @@ class ReactNativePoolakeyModule(
       payment.getPurchasedProducts {
         queryFailed { promise.reject(it) }
         querySucceed {
-          // TODO convert list to json object
+          promise.resolve(it.toJsonString())
         }
       }
     }
@@ -144,7 +144,7 @@ class ReactNativePoolakeyModule(
       payment.getSubscribedProducts {
         queryFailed { promise.reject(it) }
         querySucceed {
-          // TODO convert list to json object
+          promise.resolve(it.toJsonString())
         }
       }
     }
