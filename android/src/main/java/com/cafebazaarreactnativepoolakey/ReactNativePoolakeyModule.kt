@@ -62,7 +62,6 @@ class ReactNativePoolakeyModule(
   fun purchaseProduct(
     productId: String,
     developerPayload: String?,
-    requestCode: Int,
     promise: Promise
   ) {
 
@@ -73,7 +72,7 @@ class ReactNativePoolakeyModule(
     runIfPaymentInitialized(promise) {
       val purchaseRequest = PurchaseRequest(
         productId,
-        requestCode,
+        REQUEST_CODE,
         developerPayload
       )
 
@@ -91,7 +90,6 @@ class ReactNativePoolakeyModule(
   fun subscribeProduct(
     productId: String,
     developerPayload: String?,
-    requestCode: Int,
     promise: Promise
   ) {
 
@@ -102,7 +100,7 @@ class ReactNativePoolakeyModule(
     runIfPaymentInitialized(promise) {
       val purchaseRequest = PurchaseRequest(
         productId,
-        requestCode,
+        REQUEST_CODE,
         developerPayload
       )
 
@@ -127,7 +125,7 @@ class ReactNativePoolakeyModule(
   }
 
   @ReactMethod
-  fun getPurchasedProduct(promise: Promise) {
+  fun getPurchasedProducts(promise: Promise) {
     runIfPaymentInitialized(promise) {
       payment.getPurchasedProducts {
         queryFailed { promise.reject(it) }
@@ -139,7 +137,7 @@ class ReactNativePoolakeyModule(
   }
 
   @ReactMethod
-  fun getSubscribedProduct(promise: Promise) {
+  fun getSubscribedProducts(promise: Promise) {
     runIfPaymentInitialized(promise) {
       payment.getSubscribedProducts {
         queryFailed { promise.reject(it) }
@@ -172,6 +170,7 @@ class ReactNativePoolakeyModule(
 
   companion object {
     private lateinit var payment: Payment
+    private const val REQUEST_CODE = 1000
 
     private fun runIfPaymentInitialized(promise: Promise?, runner: () -> Unit) {
       if (::payment.isInitialized.not()) {

@@ -1,39 +1,68 @@
 import * as React from 'react';
 
-import ReactNativePoolakey, {
-  PURCHASE_REQUEST_CODE,
-  SUBSCRIBE_REQUEST_CODE,
-} from '@cafebazaar/react-native-poolakey';
-import { StyleSheet, View, Text, Button, ScrollView } from 'react-native';
+import poolakey from '@cafebazaar/react-native-poolakey';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  ScrollView,
+  TextInput,
+} from 'react-native';
 import { inAppBillingKey } from './constants';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [sku, setSku] = React.useState<string>('developerTest');
+  const [result, setResult] = React.useState<any>();
+  poolakey.initialize(inAppBillingKey);
 
-  const onPressLearnMore = async () => {
-    await ReactNativePoolakey.initializePayment(inAppBillingKey);
-    await ReactNativePoolakey.connectPayment();
-
+  const onPurchase = async () => {
+    await poolakey.connect();
     try {
-      setResult(
-        await ReactNativePoolakey.purchaseProduct(
-          'developerTest',
-          null,
-          PURCHASE_REQUEST_CODE
-        )
-      );
+      setResult(await poolakey.purchaseProduct(sku));
     } catch (e) {
       // setResult(e.toString());
       setResult(e);
     }
   };
 
+  const onGetPurchases = async () => {
+    await poolakey.connect();
+    try {
+      setResult(await poolakey.getPurchasedProducts());
+    } catch (e) {
+      setResult(e);
+    }
+  };
+
+  const onSubscribe = () => {};
+  const onCheckPurchase = () => {};
+  const onCheckSubscribed = () => {};
+
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.padded}>
         <Text>{JSON.stringify(result, null, 2)}</Text>
       </ScrollView>
-      <Button onPress={onPressLearnMore} title="Learn More" />
+      <View style={[styles.padded, styles.actionsContainer]}>
+        <TextInput
+          onChangeText={setSku}
+          value={sku}
+          style={styles.textInput}
+          placeholder="sku"
+        />
+        <Button onPress={onPurchase} title="Purchase" />
+        <Button onPress={onGetPurchases} title="Get Purchases" />
+        <Button onPress={onSubscribe} title="Subscribe" />
+        <Button
+          onPress={onCheckPurchase}
+          title="Check if user Purchased this Item"
+        />
+        <Button
+          onPress={onCheckSubscribed}
+          title="Check if user Subscribed this Item"
+        />
+      </View>
     </View>
   );
 }
@@ -41,12 +70,24 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'center',
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  padded: {
+    padding: 10,
+  },
+  actionsContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 230,
+  },
+  textInput: {
+    padding: 4,
+    borderWidth: 1,
+    borderRadius: 4,
+    width: '100%',
+  },
+  button: {
+    paddingTop: 10,
   },
 });
