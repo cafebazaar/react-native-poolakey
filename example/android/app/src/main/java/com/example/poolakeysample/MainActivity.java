@@ -1,4 +1,4 @@
-package com.example.cafebazaarreactnativepoolakey;
+package ir.cafebazaar.poolakeysample;
 
 import com.facebook.react.ReactActivity;
 

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.cafebazaarreactnativepoolakey">
+  package="ir.cafebazaar.poolakeysample">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

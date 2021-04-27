@@ -1,4 +1,4 @@
-package com.example.cafebazaarreactnativepoolakey;
+package ir.cafebazaar.poolakeysample;
 
 import android.app.Application;
 import android.content.Context;

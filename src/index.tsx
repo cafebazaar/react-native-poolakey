@@ -6,4 +6,7 @@ type ReactNativePoolakeyType = {
 
 const { ReactNativePoolakey } = NativeModules;
 
+export const PURCHASE_REQUEST_CODE = 1000;
+export const SUBSCRIBE_REQUEST_CODE = 1001;
+
 export default ReactNativePoolakey as ReactNativePoolakeyType;
