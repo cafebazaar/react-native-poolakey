@@ -2,6 +2,7 @@ package com.cafebazaarreactnativepoolakey
 
 import android.app.Activity
 import android.content.Intent
+import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -15,13 +16,13 @@ import ir.cafebazaar.poolakey.request.PurchaseRequest
 
 class ReactNativePoolakeyModule(
   private val reactContext: ReactApplicationContext
-) : ReactContextBaseJavaModule(reactContext) {
+) : ReactContextBaseJavaModule(reactContext), ActivityEventListener {
 
   override fun getName(): String {
     return "ReactNativePoolakey"
   }
 
-  private lateinit var payment: Payment
+  private var purchasePromise: Promise? = null
   private var paymentConnection: Connection? = null
 
   @ReactMethod
@@ -45,11 +46,15 @@ class ReactNativePoolakeyModule(
         disconnected { promise.reject(DisconnectException()) }
       }
     }
+
+    reactContext.addActivityEventListener(this)
   }
 
   @ReactMethod
   fun disconnectPayment(promise: Promise) {
     paymentConnection?.disconnect()
+    reactContext.removeActivityEventListener(this)
+    purchasePromise = null
     promise.resolve(null)
   }
 
@@ -58,9 +63,13 @@ class ReactNativePoolakeyModule(
     productId: String,
     developerPayload: String?,
     requestCode: Int,
-    activity: Activity,
     promise: Promise
   ) {
+
+    check(currentActivity != null) {
+      "currentActivity is null"
+    }
+
     runIfPaymentInitialized(promise) {
       val purchaseRequest = PurchaseRequest(
         productId,
@@ -69,11 +78,11 @@ class ReactNativePoolakeyModule(
       )
 
       payment.purchaseProduct(
-        activity,
+        requireNotNull(currentActivity),
         purchaseRequest
       ) {
+        purchaseFlowBegan { purchasePromise = promise }
         failedToBeginFlow { promise.reject(it) }
-        purchaseFlowBegan { promise.resolve(null) }
       }
     }
   }
@@ -83,9 +92,13 @@ class ReactNativePoolakeyModule(
     productId: String,
     developerPayload: String?,
     requestCode: Int,
-    activity: Activity,
     promise: Promise
   ) {
+
+    check(currentActivity != null) {
+      "currentActivity is null"
+    }
+
     runIfPaymentInitialized(promise) {
       val purchaseRequest = PurchaseRequest(
         productId,
@@ -94,33 +107,11 @@ class ReactNativePoolakeyModule(
       )
 
       payment.subscribeProduct(
-        activity,
+        requireNotNull(currentActivity),
         purchaseRequest
       ) {
         failedToBeginFlow { promise.reject(it) }
         purchaseFlowBegan { promise.resolve(null) }
-      }
-    }
-  }
-
-  @ReactMethod
-  fun onActivityForResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?,
-    promise: Promise
-  ) {
-    runIfPaymentInitialized(promise) {
-      payment.onActivityResult(requestCode, resultCode, data) {
-        purchaseSucceed { purchaseEntity ->
-          promise.resolve(purchaseEntity.originalJson)
-        }
-        purchaseCanceled {
-          promise.resolve(null)
-        }
-        purchaseFailed { throwable ->
-          promise.reject(throwable)
-        }
       }
     }
   }
@@ -159,12 +150,36 @@ class ReactNativePoolakeyModule(
     }
   }
 
-  private fun runIfPaymentInitialized(promise: Promise, runner: () -> Unit) {
-    if (::payment.isInitialized.not()) {
-      promise.reject(IllegalStateException("payment not initialized"))
-      return
-    }
+  override fun onNewIntent(intent: Intent?) {
+    // no need to handle this method
+  }
 
-    runner.invoke()
+  override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+    runIfPaymentInitialized(purchasePromise) {
+      payment.onActivityResult(requestCode, resultCode, data) {
+        purchaseSucceed { purchaseEntity ->
+          purchasePromise?.resolve(purchaseEntity.originalJson)
+        }
+        purchaseCanceled {
+          purchasePromise?.resolve(null)
+        }
+        purchaseFailed { throwable ->
+          purchasePromise?.reject(throwable)
+        }
+      }
+    }
+  }
+
+  companion object {
+    private lateinit var payment: Payment
+
+    private fun runIfPaymentInitialized(promise: Promise?, runner: () -> Unit) {
+      if (::payment.isInitialized.not()) {
+        promise?.reject(IllegalStateException("payment not initialized"))
+        return
+      }
+
+      runner.invoke()
+    }
   }
 }
