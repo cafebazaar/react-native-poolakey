@@ -17,18 +17,14 @@ export default function App() {
   poolakey.initialize(inAppBillingKey);
 
   const onPurchase = async () => {
-    await poolakey.connect();
     try {
       setResult(await poolakey.purchaseProduct(sku));
     } catch (e) {
-      // setResult(e.toString());
       setResult(e);
     }
-    await poolakey.disconnect();
   };
 
   const onGetPurchases = async () => {
-    await poolakey.connect();
     try {
       setResult(await poolakey.getPurchasedProducts());
     } catch (e) {
