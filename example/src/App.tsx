@@ -10,11 +10,11 @@ import {
   TextInput,
 } from 'react-native';
 import { inAppBillingKey } from './constants';
+poolakey.initialize(inAppBillingKey);
 
 export default function App() {
   const [sku, setSku] = React.useState<string>('developerTest');
   const [result, setResult] = React.useState<any>();
-  poolakey.initialize(inAppBillingKey);
 
   const onPurchase = async () => {
     try {
