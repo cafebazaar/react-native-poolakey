@@ -3,7 +3,7 @@ import { PurchaseResult, parsePurchaseResult } from './PurchaseResult';
 import log from './log';
 
 const { ReactNativePoolakey } = NativeModules;
-let isInitialized: string;
+let initRsaKey: string;
 let isConnected = false;
 
 const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
@@ -14,10 +14,10 @@ eventEmitter.addListener('disconnected', () => {
 
 export default {
   initialize(rsaKey: string) {
-    isInitialized = rsaKey;
+    initRsaKey = rsaKey;
   },
   connect(): Promise<void> {
-    if (isInitialized === undefined) {
+    if (initRsaKey === undefined) {
       throw new Error('Please initialize poolakey!');
     }
 
@@ -26,8 +26,7 @@ export default {
     }
 
     log('connecting');
-    ReactNativePoolakey.initializePayment(isInitialized);
-    return ReactNativePoolakey.connectPayment().then(() => {
+    return ReactNativePoolakey.connectPayment(initRsaKey).then(() => {
       isConnected = true;
       log('connected');
     });

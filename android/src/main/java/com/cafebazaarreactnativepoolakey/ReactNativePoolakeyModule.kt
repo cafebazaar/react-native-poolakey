@@ -27,7 +27,7 @@ class ReactNativePoolakeyModule(
   private var paymentConnection: Connection? = null
 
   @ReactMethod
-  fun initializePayment(rsaPublicKey: String? = null) {
+  fun connectPayment(rsaPublicKey: String? = null, promise: Promise) {
     val securityCheck = if (rsaPublicKey == null) {
       SecurityCheck.Disable
     } else {
@@ -35,10 +35,7 @@ class ReactNativePoolakeyModule(
     }
     val paymentConfig = PaymentConfiguration(localSecurityCheck = securityCheck)
     payment = Payment(context = reactContext, config = paymentConfig)
-  }
 
-  @ReactMethod
-  fun connectPayment(promise: Promise) {
     runIfPaymentInitialized(promise) {
       paymentConnection = payment.connect {
         connectionSucceed { promise.resolve(null) }
