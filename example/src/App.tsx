@@ -12,6 +12,14 @@ import {
 import { inAppBillingKey } from './constants';
 poolakey.initialize(inAppBillingKey);
 
+const MyButton = ({ onPress, title }: any) => {
+  return (
+    <View style={styles.button}>
+      <Button onPress={onPress} title={title} />
+    </View>
+  );
+};
+
 export default function App() {
   const [sku, setSku] = React.useState<string>('developerTest');
   const [result, setResult] = React.useState<any>();
@@ -32,9 +40,21 @@ export default function App() {
     }
   };
 
-  const onSubscribe = () => {};
-  const onCheckPurchase = () => {};
-  const onCheckSubscribed = () => {};
+  const onSubscribe = async () => {
+    try {
+      setResult(await poolakey.subscribeProduct(sku));
+    } catch (e) {
+      setResult(e);
+    }
+  };
+
+  const onGetSubscriptions = async () => {
+    try {
+      setResult(await poolakey.getSubscribedProducts());
+    } catch (e) {
+      setResult(e);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -48,17 +68,16 @@ export default function App() {
           style={styles.textInput}
           placeholder="sku"
         />
-        <Button onPress={onPurchase} title="Purchase" />
-        <Button onPress={onGetPurchases} title="Get Purchases" />
-        <Button onPress={onSubscribe} title="Subscribe" />
-        <Button
-          onPress={onCheckPurchase}
-          title="Check if user Purchased this Item"
-        />
-        <Button
-          onPress={onCheckSubscribed}
-          title="Check if user Subscribed this Item"
-        />
+        <View style={styles.actionLine}>
+          <View>
+            <MyButton onPress={onPurchase} title="Purchase" />
+            <MyButton onPress={onGetPurchases} title="Get Purchases" />
+          </View>
+          <View>
+            <MyButton onPress={onSubscribe} title="Subscribe" />
+            <MyButton onPress={onGetSubscriptions} title="Get Subscriptions" />
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -76,7 +95,11 @@ const styles = StyleSheet.create({
   actionsContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 230,
+  },
+  actionLine: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
   },
   textInput: {
     padding: 4,
@@ -85,6 +108,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    paddingTop: 10,
+    marginTop: 5,
   },
 });

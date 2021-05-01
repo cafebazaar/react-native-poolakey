@@ -109,6 +109,10 @@ class ReactNativePoolakeyModule(
       "currentActivity is null"
     }
 
+    check(purchasePromise == null) {
+      "another purchase is in process"
+    }
+
     runIfPaymentInitialized(promise) {
       val purchaseRequest = PurchaseRequest(
         productId,
@@ -120,8 +124,8 @@ class ReactNativePoolakeyModule(
         requireNotNull(currentActivity),
         purchaseRequest
       ) {
+        purchaseFlowBegan { purchasePromise = promise }
         failedToBeginFlow { promise.reject(it) }
-        purchaseFlowBegan { promise.resolve(null) }
       }
     }
   }
