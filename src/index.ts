@@ -1,10 +1,11 @@
 import bridge from './bridge';
+import log from './log';
 
 let activeConnections = 0;
 let scheduled: NodeJS.Timeout;
 let disconnecting: Promise<void> | null = null;
 function scheduleDisconnect() {
-  console.log('scheduling disconnet');
+  log('scheduling disconnet');
 
   clearTimeout(scheduled);
   scheduled = setTimeout(() => {
