@@ -7,13 +7,13 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import ir.cafebazaar.poolakey.Connection
 import ir.cafebazaar.poolakey.Payment
 import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
 import ir.cafebazaar.poolakey.exception.DisconnectException
 import ir.cafebazaar.poolakey.request.PurchaseRequest
-import com.facebook.react.bridge.Callback
 
 class ReactNativePoolakeyModule(
   private val reactContext: ReactApplicationContext
@@ -25,11 +25,9 @@ class ReactNativePoolakeyModule(
 
   private var purchasePromise: Promise? = null
   private var paymentConnection: Connection? = null
-  private var onDisconnectHandler: Callback? = null
 
   @ReactMethod
-  fun initializePayment(rsaPublicKey: String? = null, onDisconnect: Callback) {
-    onDisconnectHandler = onDisconnect
+  fun initializePayment(rsaPublicKey: String? = null) {
     val securityCheck = if (rsaPublicKey == null) {
       SecurityCheck.Disable
     } else {
@@ -45,7 +43,14 @@ class ReactNativePoolakeyModule(
       paymentConnection = payment.connect {
         connectionSucceed { promise.resolve(null) }
         connectionFailed { promise.reject(it) }
-        disconnected { onDisconnectHandler?.invoke() }
+        disconnected {
+          // reactContext.removeActivityEventListener(this)
+          purchasePromise?.reject(DisconnectException())
+          purchasePromise = null
+          reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("disconnected", null);
+        }
       }
     }
 

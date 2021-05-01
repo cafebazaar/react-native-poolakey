@@ -1,24 +1,36 @@
-import { NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 const { ReactNativePoolakey } = NativeModules;
 import { PurchaseResult, parsePurchaseResult } from './PurchaseResult';
 
+let isInitialized: string;
 let isConnected = false;
-function onDisconnect() {
+
+const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
+eventEmitter.addListener('disconnected', () => {
   isConnected = false;
   console.log('disconnected');
-}
+});
 
 export default {
   initialize(rsaKey: string) {
-    ReactNativePoolakey.initializePayment(rsaKey, onDisconnect);
+    if (isInitialized) {
+      if (isInitialized === rsaKey) return;
+      throw new Error('Cannot initialize more than once!');
+    }
+
+    isInitialized = rsaKey;
+    ReactNativePoolakey.initializePayment(rsaKey);
   },
   connect(): Promise<void> {
-    // return ReactNativePoolakey.connectPayment();
-    // if (isConnected) {
-    //   return Promise.resolve();
-    // }
+    if (isInitialized === undefined) {
+      throw new Error('Please initialize poolakey!');
+    }
 
-    // console.log('connecting');
+    if (isConnected) {
+      return Promise.resolve();
+    }
+
+    console.log('connecting');
     return ReactNativePoolakey.connectPayment().then(() => {
       isConnected = true;
       console.log('connected');
@@ -52,6 +64,7 @@ export default {
     ).then(parsePurchaseResult);
   },
   getPurchasedProducts(): Promise<PurchaseResult[]> {
+    console.log('geting PurchasedProducts');
     return ReactNativePoolakey.getPurchasedProducts().then(parsePurchaseResult);
   },
   getSubscribedProducts(): Promise<PurchaseResult[]> {
