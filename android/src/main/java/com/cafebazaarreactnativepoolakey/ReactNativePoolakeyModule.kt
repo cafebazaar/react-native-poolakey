@@ -25,6 +25,7 @@ class ReactNativePoolakeyModule(
 
   private var purchasePromise: Promise? = null
   private var paymentConnection: Connection? = null
+  private lateinit var payment: Payment
 
   @ReactMethod
   fun connectPayment(rsaPublicKey: String? = null, promise: Promise) {
@@ -161,6 +162,46 @@ class ReactNativePoolakeyModule(
     }
   }
 
+  @ReactMethod
+  fun queryPurchaseProduct(productId: String, promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getPurchasedProducts {
+        queryFailed { promise.reject(it) }
+        querySucceed { purchaseList ->
+          val product = purchaseList.firstOrNull {
+            it.packageName == productId
+          }
+
+          if (product == null) {
+            promise.reject(NotFoundException)
+          } else {
+            promise.resolve(product)
+          }
+        }
+      }
+    }
+  }
+
+  @ReactMethod
+  fun querySubscribeProduct(productId: String, promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getSubscribedProducts {
+        queryFailed { promise.reject(it) }
+        querySucceed { purchaseList ->
+          val product = purchaseList.firstOrNull {
+            it.packageName == productId
+          }
+
+          if (product == null) {
+            promise.reject(NotFoundException)
+          } else {
+            promise.resolve(product)
+          }
+        }
+      }
+    }
+  }
+
   override fun onNewIntent(intent: Intent?) {
     // no need to handle this method
   }
@@ -184,17 +225,16 @@ class ReactNativePoolakeyModule(
     }
   }
 
-  companion object {
-    private lateinit var payment: Payment
-    private const val REQUEST_CODE = 1000
-
-    private fun runIfPaymentInitialized(promise: Promise?, runner: () -> Unit) {
-      if (::payment.isInitialized.not()) {
-        promise?.reject(IllegalStateException("payment not initialized"))
-        return
-      }
-
-      runner.invoke()
+  private fun runIfPaymentInitialized(promise: Promise?, runner: () -> Unit) {
+    if (::payment.isInitialized.not()) {
+      promise?.reject(IllegalStateException("payment not initialized"))
+      return
     }
+
+    runner.invoke()
+  }
+
+  companion object {
+    private const val REQUEST_CODE = 1000
   }
 }
