@@ -1,6 +1,4 @@
 import * as React from 'react';
-
-import poolakey from '@cafebazaar/react-native-poolakey';
 import {
   StyleSheet,
   View,
@@ -9,8 +7,8 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
+import { useBazaar } from '@cafebazaar/react-native-poolakey';
 import { inAppBillingKey } from './constants';
-poolakey.initialize(inAppBillingKey);
 
 const MyButton = ({ onPress, title }: any) => {
   return (
@@ -21,6 +19,8 @@ const MyButton = ({ onPress, title }: any) => {
 };
 
 export default function App() {
+  const bazaar = useBazaar(inAppBillingKey);
+
   const [sku, setSku] = React.useState<string>('developerTest');
   const [result, setResultText] = React.useState<any>();
   async function setResult(p: Promise<any>) {
@@ -31,15 +31,15 @@ export default function App() {
     }
   }
 
-  const onPurchase = () => setResult(poolakey.purchaseProduct(sku));
-  const onQueryPurchases = () => setResult(poolakey.queryPurchaseProduct(sku));
-  const onGetPurchases = () => setResult(poolakey.getPurchasedProducts());
+  const onPurchase = () => setResult(bazaar.purchaseProduct(sku));
+  const onQueryPurchases = () => setResult(bazaar.queryPurchaseProduct(sku));
+  const onGetPurchases = () => setResult(bazaar.getPurchasedProducts());
 
   // -------------------------------------------------------
 
-  const onSubscribe = () => setResult(poolakey.subscribeProduct(sku));
-  const onQuerySubscribe = () => setResult(poolakey.querySubscribeProduct(sku));
-  const onGetSubscriptions = () => setResult(poolakey.getSubscribedProducts());
+  const onSubscribe = () => setResult(bazaar.subscribeProduct(sku));
+  const onQuerySubscribe = () => setResult(bazaar.querySubscribeProduct(sku));
+  const onGetSubscriptions = () => setResult(bazaar.getSubscribedProducts());
 
   return (
     <View style={styles.container}>

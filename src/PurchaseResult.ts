@@ -1,5 +1,3 @@
-import log from './log';
-
 export type PurchaseResult = {
   orderId: string;
   packageName: string;
@@ -11,8 +9,6 @@ export type PurchaseResult = {
 };
 
 export function parsePurchaseResult(json: any): any {
-  log(json);
-
   const obj = typeof json === 'string' ? JSON.parse(json) : json;
   if (Array.isArray(obj)) {
     return obj.map(parsePurchaseResult);

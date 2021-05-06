@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import bridge from './bridge';
 
-let devConnected = false;
+let devConnected = 0;
 let isConnected = false;
 let isConnecting: Promise<void> | undefined;
 let initedRsaKey: string;
@@ -35,15 +36,17 @@ function wrapConn<F>(fn: F): F {
   } as any) as F;
 }
 
-export default {
+const poolakey = {
   connect(rsaKey: string) {
     initedRsaKey = rsaKey;
-    devConnected = true;
+    devConnected++;
     return ensureConnected();
   },
-  disconnect() {
-    devConnected = false;
-    return bridge.disconnect();
+  async disconnect() {
+    devConnected--;
+    if (!devConnected) {
+      await bridge.disconnect();
+    }
   },
   purchaseProduct: wrapConn(bridge.purchaseProduct),
   consumePurchase: wrapConn(bridge.consumePurchase),
@@ -53,3 +56,16 @@ export default {
   queryPurchaseProduct: wrapConn(bridge.queryPurchaseProduct),
   querySubscribeProduct: wrapConn(bridge.querySubscribeProduct),
 };
+
+export function useBazaar(rsaKey: string) {
+  useEffect(() => {
+    poolakey.connect(rsaKey);
+    return () => {
+      poolakey.disconnect();
+    };
+  }, []);
+
+  return poolakey;
+}
+
+export default poolakey;
