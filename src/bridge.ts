@@ -5,7 +5,7 @@ const { ReactNativePoolakey } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
 
 export default {
-  async connect(rsaKey: string): Promise<void> {
+  async connect(rsaKey: string | null): Promise<void> {
     return ReactNativePoolakey.connectPayment(rsaKey);
   },
   disconnect(): Promise<void> {

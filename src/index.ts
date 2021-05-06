@@ -4,7 +4,7 @@ import bridge from './bridge';
 let devConnected = 0;
 let isConnected = false;
 let isConnecting: Promise<void> | undefined;
-let initedRsaKey: string;
+let initedRsaKey: string | null;
 
 bridge.addDisconnectListener(() => {
   isConnected = false;
@@ -37,8 +37,8 @@ function wrapConn<F>(fn: F): F {
 }
 
 const poolakey = {
-  connect(rsaKey: string) {
-    initedRsaKey = rsaKey;
+  connect(rsaKey: string | null) {
+    initedRsaKey = rsaKey || null;
     devConnected++;
     return ensureConnected();
   },
@@ -57,7 +57,7 @@ const poolakey = {
   querySubscribeProduct: wrapConn(bridge.querySubscribeProduct),
 };
 
-export function useBazaar(rsaKey: string) {
+export function useBazaar(rsaKey: string | null) {
   useEffect(() => {
     poolakey.connect(rsaKey);
     return () => {
