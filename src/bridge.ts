@@ -65,4 +65,14 @@ export default {
       parsePurchaseResult
     );
   },
+  queryPurchaseProduct(productId: string): Promise<PurchaseResult> {
+    return ReactNativePoolakey.queryPurchaseProduct(productId).then(
+      parsePurchaseResult
+    );
+  },
+  querySubscribeProduct(productId: string): Promise<PurchaseResult> {
+    return ReactNativePoolakey.querySubscribeProduct(productId).then(
+      parsePurchaseResult
+    );
+  },
 };

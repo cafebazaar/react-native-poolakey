@@ -47,4 +47,6 @@ export default {
   subscribeProduct: wrapConn(bridge.subscribeProduct),
   getPurchasedProducts: wrapConn(bridge.getPurchasedProducts),
   getSubscribedProducts: wrapConn(bridge.getSubscribedProducts),
+  queryPurchaseProduct: wrapConn(bridge.queryPurchaseProduct),
+  querySubscribeProduct: wrapConn(bridge.querySubscribeProduct),
 };

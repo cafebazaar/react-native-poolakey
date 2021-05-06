@@ -22,44 +22,29 @@ const MyButton = ({ onPress, title }: any) => {
 
 export default function App() {
   const [sku, setSku] = React.useState<string>('developerTest');
-  const [result, setResult] = React.useState<any>();
-
-  const onPurchase = async () => {
+  const [result, setResultText] = React.useState<any>();
+  async function setResult(p: Promise<any>) {
     try {
-      setResult(await poolakey.purchaseProduct(sku));
+      setResultText(JSON.stringify(await p, null, 2));
     } catch (e) {
-      setResult(e);
+      setResultText(e.message);
     }
-  };
+  }
 
-  const onGetPurchases = async () => {
-    try {
-      setResult(await poolakey.getPurchasedProducts());
-    } catch (e) {
-      setResult(e);
-    }
-  };
+  const onPurchase = () => setResult(poolakey.purchaseProduct(sku));
+  const onQueryPurchases = () => setResult(poolakey.queryPurchaseProduct(sku));
+  const onGetPurchases = () => setResult(poolakey.getPurchasedProducts());
 
-  const onSubscribe = async () => {
-    try {
-      setResult(await poolakey.subscribeProduct(sku));
-    } catch (e) {
-      setResult(e);
-    }
-  };
+  // -------------------------------------------------------
 
-  const onGetSubscriptions = async () => {
-    try {
-      setResult(await poolakey.getSubscribedProducts());
-    } catch (e) {
-      setResult(e);
-    }
-  };
+  const onSubscribe = () => setResult(poolakey.subscribeProduct(sku));
+  const onQuerySubscribe = () => setResult(poolakey.querySubscribeProduct(sku));
+  const onGetSubscriptions = () => setResult(poolakey.getSubscribedProducts());
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.padded}>
-        <Text>{JSON.stringify(result, null, 2)}</Text>
+        <Text>{result}</Text>
       </ScrollView>
       <View style={[styles.padded, styles.actionsContainer]}>
         <TextInput
@@ -71,10 +56,12 @@ export default function App() {
         <View style={styles.actionLine}>
           <View>
             <MyButton onPress={onPurchase} title="Purchase" />
+            <MyButton onPress={onQueryPurchases} title="Query Purchase" />
             <MyButton onPress={onGetPurchases} title="Get Purchases" />
           </View>
           <View>
             <MyButton onPress={onSubscribe} title="Subscribe" />
+            <MyButton onPress={onQuerySubscribe} title="Query Subscribe" />
             <MyButton onPress={onGetSubscriptions} title="Get Subscriptions" />
           </View>
         </View>
