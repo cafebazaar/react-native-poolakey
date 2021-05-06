@@ -169,13 +169,13 @@ class ReactNativePoolakeyModule(
         queryFailed { promise.reject(it) }
         querySucceed { purchaseList ->
           val product = purchaseList.firstOrNull {
-            it.packageName == productId
+            it.productId == productId
           }
 
           if (product == null) {
             promise.reject(NotFoundException)
           } else {
-            promise.resolve(product)
+            promise.resolve(product.originalJson)
           }
         }
       }
@@ -189,13 +189,13 @@ class ReactNativePoolakeyModule(
         queryFailed { promise.reject(it) }
         querySucceed { purchaseList ->
           val product = purchaseList.firstOrNull {
-            it.packageName == productId
+            it.productId == productId
           }
 
           if (product == null) {
             promise.reject(NotFoundException)
           } else {
-            promise.resolve(product)
+            promise.resolve(product.originalJson)
           }
         }
       }

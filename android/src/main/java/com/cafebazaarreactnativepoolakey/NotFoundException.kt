@@ -1,3 +1,3 @@
 package com.cafebazaarreactnativepoolakey
 
-object NotFoundException : Exception()
+object NotFoundException : Exception("Item not found!")
