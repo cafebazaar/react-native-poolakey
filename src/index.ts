@@ -1,47 +1,50 @@
 import bridge from './bridge';
-import log from './log';
 
-let activeConnections = 0;
-let scheduled: NodeJS.Timeout;
-let disconnecting: Promise<void> | null = null;
-function scheduleDisconnect() {
-  log('scheduling disconnet');
+let devConnected = false;
+let isConnected = false;
+let isConnecting: Promise<void> | undefined;
+let initedRsaKey: string;
 
-  clearTimeout(scheduled);
-  scheduled = setTimeout(() => {
-    if (activeConnections) return;
+bridge.addDisconnectListener(() => {
+  isConnected = false;
+});
 
-    disconnecting = bridge.disconnect(); // never rejects
-    disconnecting.then(() => {
-      disconnecting = null;
+function ensureConnected(): Promise<void> {
+  if (!devConnected) {
+    return Promise.reject('SDK is not connected to bazaar!');
+  }
+
+  if (isConnected) {
+    return Promise.resolve();
+  }
+
+  if (!isConnecting) {
+    isConnecting = bridge.connect(initedRsaKey).then(() => {
+      isConnected = true;
+      isConnecting = undefined;
     });
-  }, 3000);
+  }
+
+  return isConnecting;
 }
 
 function wrapConn<F>(fn: F): F {
   return (async function () {
-    clearTimeout(scheduled);
-    if (disconnecting) {
-      try {
-        await disconnecting;
-      } catch (e) {}
-    }
-
-    try {
-      activeConnections++;
-      await bridge.connect();
-      return await (fn as any).apply(this, arguments);
-    } finally {
-      activeConnections--;
-      if (!activeConnections) {
-        scheduleDisconnect();
-      }
-    }
+    await ensureConnected();
+    return await (fn as any).apply(this, arguments);
   } as any) as F;
 }
 
 export default {
-  initialize: bridge.initialize,
+  connect(rsaKey: string) {
+    initedRsaKey = rsaKey;
+    devConnected = true;
+    return ensureConnected();
+  },
+  disconnect() {
+    devConnected = false;
+    return bridge.disconnect();
+  },
   purchaseProduct: wrapConn(bridge.purchaseProduct),
   consumePurchase: wrapConn(bridge.consumePurchase),
   subscribeProduct: wrapConn(bridge.subscribeProduct),

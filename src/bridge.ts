@@ -1,40 +1,25 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { PurchaseResult, parsePurchaseResult } from './PurchaseResult';
-import log from './log';
 
 const { ReactNativePoolakey } = NativeModules;
-let initRsaKey: string;
-let isConnected = false;
-
 const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
-eventEmitter.addListener('disconnected', () => {
-  isConnected = false;
-  log('disconnected');
-});
 
 export default {
-  initialize(rsaKey: string) {
-    initRsaKey = rsaKey;
-  },
-  connect(): Promise<void> {
-    if (initRsaKey === undefined) {
-      throw new Error('Please initialize poolakey!');
-    }
-
-    if (isConnected) {
-      return Promise.resolve();
-    }
-
-    log('connecting');
-    return ReactNativePoolakey.connectPayment(initRsaKey).then(() => {
-      isConnected = true;
-      log('connected');
-    });
+  async connect(rsaKey: string): Promise<void> {
+    return ReactNativePoolakey.connectPayment(rsaKey);
   },
   disconnect(): Promise<void> {
     // never rejects
-    log('disconnecting');
     return ReactNativePoolakey.disconnectPayment();
+  },
+  addDisconnectListener(handler: (...args: any[]) => any): () => void {
+    eventEmitter.addListener('disconnected', handler);
+    return () => {
+      eventEmitter.removeListener('disconnected', handler);
+    };
+  },
+  removeAllDisconnectListeners() {
+    eventEmitter.removeAllListeners('disconnected');
   },
   purchaseProduct(
     productId: string,
