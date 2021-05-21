@@ -57,6 +57,9 @@ class MyApp extends React.Component {
 }
 ```
 
+## Complete Example
+Please see [example](https://github.com/cafebazaar/react-native-poolakey/tree/main/example) folder for a complete example react-native implementation.
+
 ## API Documentation
 
 ### connect / disconnect
@@ -74,26 +77,26 @@ to be established.
 Inside functional components, you can use `useBazaar` which automatically calls
 `connect`/`disconnect` on mount/unmount hooks.
 
-### purchaseProduct(productId: string): Promise<PurchaseResult>
+### purchaseProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Surchase a product, bazaar starts payment flow automatically.
 
-### consumeProduct(purchaseToken: string): Promise<void>
+### consumeProduct(purchaseToken: string): Promise&lt;void&gt;
 If your product is consumable, you can call `consumeProduct` whenever you see fit. To
 consume, you need to provide purchaseToken from a previous `purchaseProduct` call result.
 
-### subscribeProduct(productId: string): Promise<PurchaseResult>
+### subscribeProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Subscribe to a product, bazaar starts payment flow automatically.
 
-### getPurchasedProducts(): Promise<PurchaseResult[]>
+### getPurchasedProducts(): Promise&lt;PurchaseResult[]&gt;
 Get a list of products purchased by current user (logged in inside his bazaar app).
 
-### getSubscribedProducts(): Promise<PurchaseResult[]>
+### getSubscribedProducts(): Promise&lt;PurchaseResult[]&gt;
 Get a list of subscriptions purchased by current user (logged in inside his bazaar app).
 
-### queryPurchaseProduct(productId: string): Promise<PurchaseResult>
+### queryPurchaseProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Get a specific purchase data by productId
 
-### querySubscribeProduct(productId: string): Promise<PurchaseResult>
+### querySubscribeProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Get a specific subscription data by productId
 
 ### PurchaseResult
