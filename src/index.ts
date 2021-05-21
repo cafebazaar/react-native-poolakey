@@ -36,7 +36,7 @@ function ensureConnected(): Promise<void> {
 }
 
 function wrapConn<F>(fn: F): F {
-  return (async function () {
+  return (async function (this: any) {
     try {
       await ensureConnected();
       return await (fn as any).apply(this, arguments);
@@ -73,7 +73,7 @@ export function useBazaar(rsaKey: string | null) {
     return () => {
       poolakey.disconnect();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return poolakey;
 }
