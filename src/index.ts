@@ -50,7 +50,7 @@ const poolakey = {
   connect(rsaKey: string | null) {
     initedRsaKey = rsaKey || null;
     devConnected++;
-    return ensureConnected();
+    return ensureConnected().catch(praseError);
   },
   async disconnect() {
     devConnected--;
