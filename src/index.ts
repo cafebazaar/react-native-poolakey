@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
 import bridge from './bridge';
+import {
+  praseError,
+  DisconnectedError,
+  ItemNotFoundError,
+  BazaarNotFoundError,
+} from './exceptions';
 
 let devConnected = 0;
 let isConnected = false;
@@ -31,8 +37,12 @@ function ensureConnected(): Promise<void> {
 
 function wrapConn<F>(fn: F): F {
   return (async function () {
-    await ensureConnected();
-    return await (fn as any).apply(this, arguments);
+    try {
+      await ensureConnected();
+      return await (fn as any).apply(this, arguments);
+    } catch (e) {
+      throw praseError(e);
+    }
   } as any) as F;
 }
 
@@ -69,3 +79,4 @@ export function useBazaar(rsaKey: string | null) {
 }
 
 export default poolakey;
+export { DisconnectedError, ItemNotFoundError, BazaarNotFoundError };
