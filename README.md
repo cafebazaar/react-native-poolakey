@@ -1,4 +1,4 @@
-# @cafebazaar/react-native-poolakey (Under Development)
+# @cafebazaar/react-native-poolakey
 
 ReactNative In-App Billing SDK for Cafe Bazaar App Store
 
