@@ -2,6 +2,33 @@
   "name": "@cafebazaar/react-native-poolakey",
   "version": "0.1.0",
   "description": "ReactNative In-App Billing SDK for Cafe Bazaar App Store",
+  "contributors": [
+    {
+      "name": "Arash Shakery",
+      "email": "arash.shakery@gmail.com",
+      "url": "https://github.com/arash16"
+    },
+    {
+      "name": "Shayan Pourvatan",
+      "email": "shayanpourvatan@gmail.com",
+      "url": "https://github.com/shayanpourvatan"
+    }
+  ],
+  "repository": "https://github.com/cafebazaar/react-native-poolakey",
+  "homepage": "https://github.com/cafebazaar/react-native-poolakey",
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "bugs": {
+    "url": "https://github.com/cafebazaar/react-native-poolakey/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -29,21 +56,6 @@
     "release": "release-it",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn"
-  },
-  "keywords": [
-    "react-native",
-    "ios",
-    "android"
-  ],
-  "repository": "https://github.com/cafebazaar/react-native-poolakey",
-  "author": "Arash <arash.shakery@gmail.com> (https://github.com/arash16)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cafebazaar/react-native-poolakey/issues"
-  },
-  "homepage": "https://github.com/cafebazaar/react-native-poolakey#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
