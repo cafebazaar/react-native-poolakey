@@ -202,6 +202,30 @@ class ReactNativePoolakeyModule(
     }
   }
 
+  @ReactMethod
+  fun getInAppSkuDetails(productIds: List<String>, promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getInAppSkuDetails(productIds) {
+        getSkuDetailsFailed { promise.reject(it) }
+        getSkuDetailsSucceed {
+          promise.resolve(it.toJsonString())
+        }
+      }
+    }
+  }
+
+  @ReactMethod
+  fun getSubscriptionSkuDetails(productIds: List<String>, promise: Promise) {
+    runIfPaymentInitialized(promise) {
+      payment.getSubscriptionSkuDetails(productIds) {
+        getSkuDetailsFailed { promise.reject(it) }
+        getSkuDetailsSucceed {
+          promise.resolve(it.toJsonString())
+        }
+      }
+    }
+  }
+
   override fun onNewIntent(intent: Intent?) {
     // no need to handle this method
   }
