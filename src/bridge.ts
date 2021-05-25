@@ -1,5 +1,6 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { PurchaseResult, parsePurchaseResult } from './PurchaseResult';
+import { SkuDetails, parseSkuDetails } from './SkuDetails';
 
 const { ReactNativePoolakey } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
@@ -59,5 +60,15 @@ export default {
     return ReactNativePoolakey.querySubscribeProduct(productId).then(
       parsePurchaseResult
     );
+  },
+  getInAppSkuDetails(productIds: string[]): Promise<SkuDetails[]> {
+    return ReactNativePoolakey.getInAppSkuDetails(
+      JSON.stringify(productIds)
+    ).then(parseSkuDetails);
+  },
+  getSubscriptionSkuDetails(productIds: string[]): Promise<SkuDetails[]> {
+    return ReactNativePoolakey.getSubscriptionSkuDetails(
+      JSON.stringify(productIds)
+    ).then(parseSkuDetails);
   },
 };

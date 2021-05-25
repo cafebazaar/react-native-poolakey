@@ -52,12 +52,16 @@ export default function App() {
   };
   const onQueryPurchases = () => setResult(bazaar.queryPurchaseProduct(sku));
   const onGetPurchases = () => setResult(bazaar.getPurchasedProducts());
+  const onGetInAppSkuDetails = () =>
+    setResult(bazaar.getInAppSkuDetails(sku.split(',')));
 
   // -------------------------------------------------------
 
   const onSubscribe = () => setResult(bazaar.subscribeProduct(sku));
   const onQuerySubscribe = () => setResult(bazaar.querySubscribeProduct(sku));
   const onGetSubscriptions = () => setResult(bazaar.getSubscribedProducts());
+  const onGetSubscriptionSkuDetails = () =>
+    setResult(bazaar.getSubscriptionSkuDetails(sku.split(',')));
 
   return (
     <View style={styles.container}>
@@ -84,11 +88,19 @@ export default function App() {
             <MyButton onPress={onPurchase} title="Purchase" />
             <MyButton onPress={onQueryPurchases} title="Query Purchase" />
             <MyButton onPress={onGetPurchases} title="Get Purchases" />
+            <MyButton
+              onPress={onGetInAppSkuDetails}
+              title="Get in-app details"
+            />
           </View>
           <View>
             <MyButton onPress={onSubscribe} title="Subscribe" />
             <MyButton onPress={onQuerySubscribe} title="Query Subscribe" />
             <MyButton onPress={onGetSubscriptions} title="Get Subscriptions" />
+            <MyButton
+              onPress={onGetSubscriptionSkuDetails}
+              title="Get subs sku details"
+            />
           </View>
         </View>
       </View>

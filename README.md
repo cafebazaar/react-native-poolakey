@@ -99,6 +99,12 @@ Get a specific purchase data by productId
 ### querySubscribeProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Get a specific subscription data by productId
 
+### getInAppSkuDetails(productIds: string[]): Promise<SkuDetails[]>
+Get array of in-app sku details for all provided product ids
+
+### getSubscriptionSkuDetails(productIds: string[]): Promise<SkuDetails[]>
+Get array of subscription sku details for all provided product ids
+
 ### PurchaseResult
 ```typescript
 type PurchaseResult = {
@@ -109,6 +115,17 @@ type PurchaseResult = {
   purchaseState: number;
   developerPayload: string;
   purchaseToken: string;
+}
+```
+
+### SkuDetails
+```typescript
+type SkuDetails = {
+  sku: string;
+  type: string;
+  price: string;
+  title: Date;
+  description: number;
 }
 ```
 

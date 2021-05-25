@@ -65,6 +65,8 @@ const poolakey = {
   getSubscribedProducts: wrapConn(bridge.getSubscribedProducts),
   queryPurchaseProduct: wrapConn(bridge.queryPurchaseProduct),
   querySubscribeProduct: wrapConn(bridge.querySubscribeProduct),
+  getInAppSkuDetails: wrapConn(bridge.getInAppSkuDetails),
+  getSubscriptionSkuDetails: wrapConn(bridge.getSubscriptionSkuDetails),
 };
 
 export function useBazaar(rsaKey: string | null) {

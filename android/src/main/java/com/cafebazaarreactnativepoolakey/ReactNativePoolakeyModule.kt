@@ -203,7 +203,8 @@ class ReactNativePoolakeyModule(
   }
 
   @ReactMethod
-  fun getInAppSkuDetails(productIds: List<String>, promise: Promise) {
+  fun getInAppSkuDetails(productIdsJson: String, promise: Promise) {
+    val productIds = parseProductIds(productIdsJson)
     runIfPaymentInitialized(promise) {
       payment.getInAppSkuDetails(productIds) {
         getSkuDetailsFailed { promise.reject(it) }
@@ -215,7 +216,8 @@ class ReactNativePoolakeyModule(
   }
 
   @ReactMethod
-  fun getSubscriptionSkuDetails(productIds: List<String>, promise: Promise) {
+  fun getSubscriptionSkuDetails(productIdsJson: String, promise: Promise) {
+    val productIds = parseProductIds(productIdsJson)
     runIfPaymentInitialized(promise) {
       payment.getSubscriptionSkuDetails(productIds) {
         getSkuDetailsFailed { promise.reject(it) }
