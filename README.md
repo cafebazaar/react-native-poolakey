@@ -78,7 +78,7 @@ Inside functional components, you can use `useBazaar` which automatically calls
 `connect`/`disconnect` on mount/unmount hooks.
 
 ### purchaseProduct(productId: string): Promise&lt;PurchaseResult&gt;
-Surchase a product, bazaar starts payment flow automatically.
+Purchase a product, bazaar starts payment flow automatically.
 
 ### consumeProduct(purchaseToken: string): Promise&lt;void&gt;
 If your product is consumable, you can call `consumeProduct` whenever you see fit. To
