@@ -5,6 +5,7 @@ buildscript {
   repositories {
     google()
     jcenter()
+    maven { url "https://jitpack.io" }
   }
 
   dependencies {
@@ -54,6 +55,7 @@ repositories {
   mavenCentral()
   jcenter()
   google()
+  maven { url "https://jitpack.io" }
 
   def found = false
   def defaultDir = null
@@ -127,5 +129,5 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "ir.cafebazaar:poolakey:1.0.0-beta01"
+  implementation "com.github.cafebazaar:Poolakey:1.1.0-beta02"
 }
