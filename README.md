@@ -80,9 +80,9 @@ Inside functional components, you can use `useBazaar` which automatically calls
 ### purchaseProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Purchase a product, bazaar starts payment flow automatically.
 
-### consumeProduct(purchaseToken: string): Promise&lt;void&gt;
-If your product is consumable, you can call `consumeProduct` whenever you see fit. To
-consume, you need to provide purchaseToken from a previous `purchaseProduct` call result.
+### consumePurchase(purchaseToken: string): Promise&lt;void&gt;
+If your product is consumable, you can call `consumePurchase` whenever you see fit. To
+consume, you need to provide purchaseToken from a previous `consumePurchase` call result.
 
 ### subscribeProduct(productId: string): Promise&lt;PurchaseResult&gt;
 Subscribe to a product, bazaar starts payment flow automatically.
