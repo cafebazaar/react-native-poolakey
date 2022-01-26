@@ -24,11 +24,13 @@ export default {
   },
   purchaseProduct(
     productId: string,
-    developerPayload: string | null | undefined = null
+    developerPayload: string | null | undefined = null,
+    dynamicPriceToken: string | null | undefined = null,
   ): Promise<PurchaseResult> {
     return ReactNativePoolakey.purchaseProduct(
       productId,
-      developerPayload || null
+      developerPayload || null,
+      dynamicPriceToken|| null,
     ).then(parsePurchaseResult);
   },
   consumePurchase(purchaseToken: string): Promise<void> {

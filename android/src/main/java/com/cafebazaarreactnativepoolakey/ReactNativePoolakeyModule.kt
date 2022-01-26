@@ -68,6 +68,7 @@ class ReactNativePoolakeyModule(
   fun purchaseProduct(
     productId: String,
     developerPayload: String?,
+    dynamicPriceToken: String?,
     promise: Promise
   ) {
 
@@ -83,7 +84,8 @@ class ReactNativePoolakeyModule(
       val purchaseRequest = PurchaseRequest(
         productId,
         REQUEST_CODE,
-        developerPayload
+        developerPayload,
+        dynamicPriceToken
       )
 
       payment.purchaseProduct(
