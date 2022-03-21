@@ -61,6 +61,25 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
     promise.resolve(null)
   }
 
+  fun startActivity(
+    command: PaymentActivity.Command,
+    productId: String,
+    promise: Promise,
+    payload: String?,
+    dynamicPriceToken: String?
+  ) {
+    
+    PaymentActivity.start(
+      activity,
+      command,
+      productId,
+      payment,
+      promise,
+      payload,
+      dynamicPriceToken
+    )
+  }
+
   @ReactMethod
   fun purchaseProduct(
     productId: String,
@@ -72,24 +91,15 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
       "currentActivity is null"
     }
 
-    check(purchasePromise == null) {
-      "another purchase is in process"
-    }
-
     runIfPaymentInitialized(promise) {
-      val purchaseRequest = PurchaseRequest(
-        productId,
-        REQUEST_CODE,
-        developerPayload
+      startActivity(
+        command = PaymentActivity.Command.Purchase,
+        productId = productId,
+        promise = promise,
+        payload = developerPayload,
+        dynamicPriceToken = dynamicPriceToken,
       )
 
-      payment.purchaseProduct(
-        requireNotNull(currentActivity),
-        purchaseRequest
-      ) {
-        purchaseFlowBegan { purchasePromise = promise }
-        failedToBeginFlow { promise.reject(it) }
-      }
     }
   }
 
@@ -104,24 +114,14 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
       "currentActivity is null"
     }
 
-    check(purchasePromise == null) {
-      "another purchase is in process"
-    }
-
     runIfPaymentInitialized(promise) {
-      val purchaseRequest = PurchaseRequest(
-        productId,
-        REQUEST_CODE,
-        developerPayload
+      startActivity(
+        command = PaymentActivity.Command.Subscribe,
+        productId = productId,
+        promise = promise,
+        payload = developerPayload,
+        dynamicPriceToken = dynamicPriceToken,
       )
-
-      payment.subscribeProduct(
-        requireNotNull(currentActivity),
-        purchaseRequest
-      ) {
-        purchaseFlowBegan { purchasePromise = promise }
-        failedToBeginFlow { promise.reject(it) }
-      }
     }
   }
 
