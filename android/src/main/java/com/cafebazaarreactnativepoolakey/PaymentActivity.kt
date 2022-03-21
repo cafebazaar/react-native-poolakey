@@ -40,9 +40,19 @@ class PaymentActivity : ComponentActivity() {
   }
 
   private fun purchaseProduct(callback: PurchaseCallback.() -> Unit) {
+    payment.purchaseProduct(
+      activityResultRegistry,
+      PurchaseRequest(productId, payload, dynamicPriceToken),
+      callback
+    )
   }
 
   private fun subscribeProduct(callback: PurchaseCallback.() -> Unit) {
+    payment.subscribeProduct(
+      activityResultRegistry,
+      PurchaseRequest(productId, payload, dynamicPriceToken),
+      callback
+    )
   }
 
   companion object {
