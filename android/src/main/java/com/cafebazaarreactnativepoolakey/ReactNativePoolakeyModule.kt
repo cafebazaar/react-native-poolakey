@@ -2,7 +2,6 @@ package com.cafebazaarreactnativepoolakey
 
 import android.app.Activity
 import android.content.Intent
-import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -15,9 +14,7 @@ import ir.cafebazaar.poolakey.config.SecurityCheck
 import ir.cafebazaar.poolakey.exception.DisconnectException
 import ir.cafebazaar.poolakey.request.PurchaseRequest
 
-class ReactNativePoolakeyModule(
-  private val reactContext: ReactApplicationContext
-) : ReactContextBaseJavaModule(reactContext), ActivityEventListener {
+class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
   override fun getName(): String {
     return "ReactNativePoolakey"
@@ -223,29 +220,6 @@ class ReactNativePoolakeyModule(
         getSkuDetailsFailed { promise.reject(it) }
         getSkuDetailsSucceed {
           promise.resolve(it.toJsonString())
-        }
-      }
-    }
-  }
-
-  override fun onNewIntent(intent: Intent?) {
-    // no need to handle this method
-  }
-
-  override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
-    runIfPaymentInitialized(purchasePromise) {
-      payment.onActivityResult(requestCode, resultCode, data) {
-        purchaseSucceed { purchaseEntity ->
-          purchasePromise?.resolve(purchaseEntity.originalJson)
-          purchasePromise = null
-        }
-        purchaseCanceled {
-          purchasePromise?.resolve(null)
-          purchasePromise = null
-        }
-        purchaseFailed { throwable ->
-          purchasePromise?.reject(throwable)
-          purchasePromise = null
         }
       }
     }
