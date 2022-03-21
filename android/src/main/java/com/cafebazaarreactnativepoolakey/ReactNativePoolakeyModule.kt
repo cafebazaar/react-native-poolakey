@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import ir.cafebazaar.poolakey.Connection
+import ir.cafebazaar.poolakey.ConnectionState
 import ir.cafebazaar.poolakey.Payment
 import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
@@ -48,14 +49,11 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
         }
       }
     }
-
-    reactContext.addActivityEventListener(this)
   }
 
   @ReactMethod
   fun disconnectPayment(promise: Promise) {
     paymentConnection?.disconnect()
-    reactContext.removeActivityEventListener(this)
     purchasePromise?.reject(DisconnectException())
     purchasePromise = null
     promise.resolve(null)
@@ -68,6 +66,16 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
     payload: String?,
     dynamicPriceToken: String?
   ) {
+
+    if (paymentConnection?.getState() != ConnectionState.Connected) {
+      promise.reject(IllegalStateException("payment not connected"))
+      return
+    }
+    val activity = getCurrentActivity();
+    if (activity == null) {
+      promise.reject(IllegalStateException("activity not found"))
+      return
+    }
     
     PaymentActivity.start(
       activity,
