@@ -92,6 +92,7 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
   fun purchaseProduct(
     productId: String,
     developerPayload: String?,
+    dynamicPriceToken: String?,
     promise: Promise
   ) {
 
@@ -115,6 +116,7 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
   fun subscribeProduct(
     productId: String,
     developerPayload: String?,
+    dynamicPriceToken: String?,
     promise: Promise
   ) {
 
