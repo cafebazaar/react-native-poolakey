@@ -21,7 +21,6 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
     return "ReactNativePoolakey"
   }
 
-  private var purchasePromise: Promise? = null
   private var paymentConnection: Connection? = null
   private lateinit var payment: Payment
 
@@ -41,8 +40,7 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
         connectionFailed { promise.reject(it) }
         disconnected {
           // reactContext.removeActivityEventListener(this)
-          purchasePromise?.reject(DisconnectException())
-          purchasePromise = null
+          promise.reject(DisconnectException())
           reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("disconnected", null);
@@ -54,8 +52,6 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
   @ReactMethod
   fun disconnectPayment(promise: Promise) {
     paymentConnection?.disconnect()
-    purchasePromise?.reject(DisconnectException())
-    purchasePromise = null
     promise.resolve(null)
   }
 
@@ -244,4 +240,7 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
     runner.invoke()
   }
 
+  // companion object {
+  //   private const val REQUEST_CODE = 1000
+  // }
 }
