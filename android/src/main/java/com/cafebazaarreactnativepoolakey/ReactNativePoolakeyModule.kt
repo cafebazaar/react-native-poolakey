@@ -227,7 +227,17 @@ class ReactNativePoolakeyModule(
       }
     }
   }
+  
+  @ReactMethod
+  fun addListener(type: String?) {
+      // Keep: Required for RN built in Event Emitter Calls.
+  }
 
+  @ReactMethod
+  fun removeListeners(type: String?) {
+      // Keep: Required for RN built in Event Emitter Calls.
+  }
+  
   override fun onNewIntent(intent: Intent?) {
     // no need to handle this method
   }
