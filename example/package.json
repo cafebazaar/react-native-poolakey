@@ -1,7 +1,7 @@
 {
   "name": "@cafebazaar/react-native-poolakey-example",
   "description": "Example app for @cafebazaar/react-native-poolakey",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
