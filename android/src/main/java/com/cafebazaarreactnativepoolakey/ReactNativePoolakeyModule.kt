@@ -240,7 +240,4 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
     runner.invoke()
   }
 
-  // companion object {
-  //   private const val REQUEST_CODE = 1000
-  // }
 }
