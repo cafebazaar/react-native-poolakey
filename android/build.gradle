@@ -4,7 +4,7 @@ buildscript {
 
   repositories {
     google()
-    jcenter()
+    mavenCentral()
     maven { url "https://jitpack.io" }
   }
 
@@ -52,9 +52,8 @@ android {
 }
 
 repositories {
-  mavenCentral()
-  jcenter()
   google()
+  mavenCentral()
   maven { url "https://jitpack.io" }
 
   def found = false
@@ -116,7 +115,7 @@ repositories {
   }
 
   if (!found) {
-    throw new GradleException(
+    throw new FileNotFoundException(
             "${project.name}: unable to locate React Native android sources. " +
                     "Ensure you have you installed React Native as a dependency in your project and try again."
     )
