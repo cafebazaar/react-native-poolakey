@@ -112,6 +112,30 @@ class App extends Component {
     }
   }
 
+  reteriverProducts = async () => {
+    let productIds = itemList.map(x => x.id);
+    let skuDetails = await bazaar.getInAppSkuDetails(productIds);
+    skuDetails.map(s => {
+      items[s.sku].title = s.title;
+      items[s.sku].price = s.price;
+      items[s.sku].description = s.description;
+    });
+
+    // Update state based on old purchases and subscriptions
+    let purchases = await bazaar.getPurchasedProducts();
+    purchases.map(p => {
+      this.handlePurchase(p);
+    });
+    let subscribes = await bazaar.getSubscribedProducts();
+    subscribes.map(p => {
+      this.handlePurchase(p);
+    });
+
+    this.setState({
+      waiting: false
+    });
+  }
+
 });
 
   render() {
