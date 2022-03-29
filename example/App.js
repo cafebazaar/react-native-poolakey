@@ -136,7 +136,45 @@ class App extends Component {
     });
   }
 
-});
+  purchase = async (item) => {
+    if (item.id == "gas" || item.id == "dynamic_price") {
+      if (this.state.vehicle.gas >= 4) {
+        this.log(`Fuel tank is full !`)
+        return;
+      }
+    }
+
+    const _dynamicPriceToken = item.id == "dynamic_price" ? dynamicPriceToken : "";
+
+    const purchaseInfo = await bazaar.purchaseProduct(item.id, "", _dynamicPriceToken).catch((e) => {
+      this.log(`Purchase error => ${e.message}.`);
+    });
+
+    if (purchaseInfo == null || purchaseInfo.purchaseState != 0) {
+      this.log(`Purchase failed.`);
+      return;
+    }
+    this.handlePurchase(purchaseInfo);
+  }
+
+  handlePurchase = async (purchaseInfo) => {
+
+    // Consume purchase
+    if (items[purchaseInfo.productId].consumable) {
+      await bazaar.consumePurchase(purchaseInfo.purchaseToken);
+    }
+
+    // Change assets value
+    if (purchaseInfo.productId == "gas" || purchaseInfo.productId == "dynamic_price") {
+      this.seGas(this.state.vehicle.gas + 1);
+    } else if (purchaseInfo.productId == "infinite_gas_monthly") {
+      this.seGas(5);
+    } else if (purchaseInfo.productId == "premium") {
+      this.setState({
+        vehicle: Object.assign(this.state.vehicle, { skin: require("./assets/premium.png") })
+      });
+    }
+  }
 
   render() {
     return (
