@@ -15,7 +15,8 @@ import ir.cafebazaar.poolakey.config.SecurityCheck
 import ir.cafebazaar.poolakey.exception.DisconnectException
 import ir.cafebazaar.poolakey.request.PurchaseRequest
 
-class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContext) :
+  ReactContextBaseJavaModule(reactContext) {
 
   override fun getName(): String {
     return "ReactNativePoolakey"
@@ -72,7 +73,7 @@ class ReactNativePoolakeyModule(private val reactContext: ReactApplicationContex
       promise.reject(IllegalStateException("activity not found"))
       return
     }
-    
+
     PaymentActivity.start(
       activity,
       command,
