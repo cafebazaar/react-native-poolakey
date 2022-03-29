@@ -103,6 +103,15 @@ class App extends Component {
     }
   }
 
+  log = (text) => {
+    console.log(text);
+    if (this.didMount) {
+      this.setState({
+        log: this.state.log + "\n" + text
+      });
+    }
+  }
+
 });
 
   render() {
@@ -147,6 +156,12 @@ class App extends Component {
             <Button title='Clear' onPress={() => this.setState({ log: "" })} />
           </View>
         </View>
+        {
+          this.state.waiting ? (
+            <View style={{ backgroundColor: 0xe2e2e2b2, position: 'absolute', right: 0, left: 0, top: 0, bottom: 0, justifyContent: 'center' }}>
+              <Text style={{ alignSelf: 'center', color: 'black' }}>Please wait ...</Text>
+            </View>) : null
+        }
       </SafeAreaView>);
   }
 }
