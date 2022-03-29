@@ -1,4 +1,4 @@
-package ir.cafebazaar.poolakeysample;
+package com.sample.android.trivialdrivesample;
 
 import com.facebook.react.ReactActivity;
 

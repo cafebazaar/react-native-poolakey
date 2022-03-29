@@ -1,4 +1,4 @@
-package ir.cafebazaar.poolakeysample;
+package com.sample.android.trivialdrivesample;
 
 import android.app.Application;
 import android.content.Context;
