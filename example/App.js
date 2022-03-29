@@ -13,6 +13,8 @@ import {
   View,
 } from 'react-native';
 
+import bazaar from '@cafebazaar/react-native-poolakey';
+
 const styles = StyleSheet.create({
   header: {
     height: 120,
@@ -33,6 +35,9 @@ const styles = StyleSheet.create({
   }
 });
 
+
+var dynamicPriceToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcmljZSI6MTAwLCJwYWNrYWdlX25hbWUiOiJjb20uc2FtcGxlLmFuZHJvaWQudHJpdmlhbGRyaXZlc2FtcGxlIiwic2t1IjoiZHluYW1pY19wcmljZSIsImV4cCI6MTY3MTYwMDY2OCwibm9uY2UiOiI8ZnVuY3Rpb24gdXVpZDQgYXQgMHgwMDAwMDE4MENBN0I3RjQwPiJ9.OgyrUqYCBlBzvLyItcBsY67WU1JVwZAk0yE3GtS1uoA";
+const base64RSA = "MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDbY/p0EgtJZHE6t9nVZ6QyzcR7e2O5RalVJx6Y+6Dc7n40FqdxAjHBYlptyZsdTg9r77JCS7UjEPXNuCHG5NCBLq/u7DWQQmh8otzMK6/P6nzsJUYvCqyNEu7cecaXmh5DgKlfRFpzNXBzBd4K3Xon8hBJjez/qdzvMtmHVFpdCSApUC0WTmT/kq1tDKLU1lDAEt10K83xZbi6lJWcAK20VUn+9KSVFxsr5WuXuWcCAwEAAQ==";
 const itemList = [
   { id: "gas", icon: require('./assets/buy_gas.png'), consumable: true },
   { id: "dynamic_price", icon: require('./assets/buy_gas.png'), consumable: true },
@@ -44,6 +49,19 @@ const items = new Map();
 itemList.map((x) => items[x.id] = x);
 
 class App extends Component {
+  didMount = false;
+
+  componentDidMount() {
+    this.didMount = true;
+    bazaar
+      .connect(base64RSA)
+      .catch(() => this.log).then(this.reteriverProducts); // bazaar is not installed or what?!
+  }
+
+  componentWillUnmount() {
+    bazaar.disconnect();
+  }
+
   state = {
     log: "",
     waiting: true,
