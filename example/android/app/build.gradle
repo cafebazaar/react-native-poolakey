@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "ir.cafebazaar.poolakeysample"
+        applicationId "com.sample.android.trivialdrivesample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
