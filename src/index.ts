@@ -41,7 +41,7 @@ function wrapConn<F>(fn: F): F {
       await ensureConnected();
       return await (fn as any).apply(this, arguments);
     } catch (e) {
-      throw praseError(e);
+      throw praseError(new Error(e + ""));
     }
   } as any) as F;
 }
