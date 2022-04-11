@@ -104,10 +104,17 @@ class App extends Component {
   }
 
   log = (text) => {
+    var txt = "";
+    if (typeof text === 'object') {
+      txt += JSON.stringify(text);
+    } else {
+      txt = text;
+    }
+
     console.log(text);
     if (this.didMount) {
       this.setState({
-        log: this.state.log + "\n" + text
+        log: this.state.log + "\n" + txt
       });
     }
   }
@@ -159,6 +166,7 @@ class App extends Component {
 
   handlePurchase = async (purchaseInfo) => {
 
+    this.log(purchaseInfo);
     // Consume purchase
     if (items[purchaseInfo.productId].consumable) {
       await bazaar.consumePurchase(purchaseInfo.purchaseToken);
