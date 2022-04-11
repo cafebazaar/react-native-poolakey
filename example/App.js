@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
 });
 
 
-var dynamicPriceToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcmljZSI6MTAwLCJwYWNrYWdlX25hbWUiOiJjb20uc2FtcGxlLmFuZHJvaWQudHJpdmlhbGRyaXZlc2FtcGxlIiwic2t1IjoiZHluYW1pY19wcmljZSIsImV4cCI6MTY3MTYwMDY2OCwibm9uY2UiOiI8ZnVuY3Rpb24gdXVpZDQgYXQgMHgwMDAwMDE4MENBN0I3RjQwPiJ9.OgyrUqYCBlBzvLyItcBsY67WU1JVwZAk0yE3GtS1uoA";
 const base64RSA = "MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDbY/p0EgtJZHE6t9nVZ6QyzcR7e2O5RalVJx6Y+6Dc7n40FqdxAjHBYlptyZsdTg9r77JCS7UjEPXNuCHG5NCBLq/u7DWQQmh8otzMK6/P6nzsJUYvCqyNEu7cecaXmh5DgKlfRFpzNXBzBd4K3Xon8hBJjez/qdzvMtmHVFpdCSApUC0WTmT/kq1tDKLU1lDAEt10K83xZbi6lJWcAK20VUn+9KSVFxsr5WuXuWcCAwEAAQ==";
 const itemList = [
   { id: "gas", icon: require('./assets/buy_gas.png'), consumable: true },
@@ -63,6 +62,7 @@ class App extends Component {
   }
 
   state = {
+    dynamicPriceToken: "",
     log: "",
     waiting: true,
     vehicle: { gas: 4, gasIcon: require("./assets/gas4.png"), skin: require("./assets/free.png") }
@@ -144,7 +144,7 @@ class App extends Component {
       }
     }
 
-    const _dynamicPriceToken = item.id == "dynamic_price" ? dynamicPriceToken : "";
+    const _dynamicPriceToken = item.id == "dynamic_price" ? this.state.dynamicPriceToken : "";
 
     const purchaseInfo = await bazaar.purchaseProduct(item.id, "", _dynamicPriceToken).catch((e) => {
       this.log(`Purchase error => ${e.message}.`);
@@ -198,7 +198,9 @@ class App extends Component {
                     <View style={{ flexDirection: 'column', flex: 0.8 }}>
                       <Text style={styles.text}>{item.title}</Text>
                       {item.id == "dynamic_price"
-                        ? <TextInput style={{ borderWidth: 1, height: 36 }} value={dynamicPriceToken} onChangeText={(t) => { dynamicPriceToken = t }} />
+                        ? <TextInput style={{ borderWidth: 1, height: 36 }} value={this.state.dynamicPriceToken} onChangeText={(t) => {
+                          this.setState({ dynamicPriceToken: t });
+                        }} />
                         : <Text style={styles.text}>{item.description}</Text>}
                     </View>
                     <View style={{ flexDirection: 'column', flex: 0.3, alignItems: 'center' }}>
