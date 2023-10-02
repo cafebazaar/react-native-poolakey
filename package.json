@@ -1,6 +1,6 @@
 {
   "name": "@cafebazaar/react-native-poolakey",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "ReactNative implementation of CafeBazaar's in-app payment SDK",
   "contributors": [
     {
