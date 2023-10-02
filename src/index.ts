@@ -36,14 +36,14 @@ function ensureConnected(): Promise<void> {
 }
 
 function wrapConn<F>(fn: F): F {
-  return (async function (this: any) {
+  return async function (this: any) {
     try {
       await ensureConnected();
       return await (fn as any).apply(this, arguments);
     } catch (e) {
-      throw praseError(new Error(e + ""));
+      throw praseError(new Error(e + ''));
     }
-  } as any) as F;
+  } as any as F;
 }
 
 const poolakey = {

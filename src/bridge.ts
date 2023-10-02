@@ -1,22 +1,38 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
-import { PurchaseResult, parsePurchaseResult } from './PurchaseResult';
-import { SkuDetails, parseSkuDetails } from './SkuDetails';
+import { parsePurchaseResult } from './PurchaseResult';
+import type { PurchaseResult } from './PurchaseResult';
+import { parseSkuDetails } from './SkuDetails';
+import type { SkuDetails } from './SkuDetails';
 
-const { ReactNativePoolakey } = NativeModules;
-const eventEmitter = new NativeEventEmitter(ReactNativePoolakey);
+const LINKING_ERROR =
+  "The package 'react-native-poolakey' doesn't seem to be linked. Make sure you rebuilt the app after installing the package";
+
+const Poolakey = NativeModules.ReactNativePoolakey
+  ? NativeModules.ReactNativePoolakey
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
+
+const eventEmitter = new NativeEventEmitter(Poolakey);
 
 export default {
   async connect(rsaKey: string | null): Promise<void> {
-    return ReactNativePoolakey.connectPayment(rsaKey);
+    return Poolakey.connectPayment(rsaKey);
   },
   disconnect(): Promise<void> {
     // never rejects
-    return ReactNativePoolakey.disconnectPayment();
+    return Poolakey.disconnectPayment();
   },
   addDisconnectListener(handler: (...args: any[]) => any): () => void {
-    eventEmitter.addListener('disconnected', handler);
+    const eventListener = eventEmitter.addListener('disconnected', handler);
+
     return () => {
-      eventEmitter.removeListener('disconnected', handler);
+      eventListener.remove();
     };
   },
   removeAllDisconnectListeners() {
@@ -27,52 +43,46 @@ export default {
     developerPayload: string | null | undefined = null,
     dynamicPriceToken: string | null | undefined = null
   ): Promise<PurchaseResult> {
-    return ReactNativePoolakey.purchaseProduct(
+    return Poolakey.purchaseProduct(
       productId,
       developerPayload || null,
       dynamicPriceToken || null
     ).then(parsePurchaseResult);
   },
   consumePurchase(purchaseToken: string): Promise<void> {
-    return ReactNativePoolakey.consumePurchase(purchaseToken);
+    return Poolakey.consumePurchase(purchaseToken);
   },
   subscribeProduct(
     productId: string,
     developerPayload: string | null | undefined = null,
     dynamicPriceToken: string | null | undefined = null
   ): Promise<PurchaseResult> {
-    return ReactNativePoolakey.subscribeProduct(
+    return Poolakey.subscribeProduct(
       productId,
       developerPayload || null,
-      dynamicPriceToken || null,
+      dynamicPriceToken || null
     ).then(parsePurchaseResult);
   },
   getPurchasedProducts(): Promise<PurchaseResult[]> {
-    return ReactNativePoolakey.getPurchasedProducts().then(parsePurchaseResult);
+    return Poolakey.getPurchasedProducts().then(parsePurchaseResult);
   },
   getSubscribedProducts(): Promise<PurchaseResult[]> {
-    return ReactNativePoolakey.getSubscribedProducts().then(
-      parsePurchaseResult
-    );
+    return Poolakey.getSubscribedProducts().then(parsePurchaseResult);
   },
   queryPurchaseProduct(productId: string): Promise<PurchaseResult> {
-    return ReactNativePoolakey.queryPurchaseProduct(productId).then(
-      parsePurchaseResult
-    );
+    return Poolakey.queryPurchaseProduct(productId).then(parsePurchaseResult);
   },
   querySubscribeProduct(productId: string): Promise<PurchaseResult> {
-    return ReactNativePoolakey.querySubscribeProduct(productId).then(
-      parsePurchaseResult
-    );
+    return Poolakey.querySubscribeProduct(productId).then(parsePurchaseResult);
   },
   getInAppSkuDetails(productIds: string[]): Promise<SkuDetails[]> {
-    return ReactNativePoolakey.getInAppSkuDetails(
-      JSON.stringify(productIds)
-    ).then(parseSkuDetails);
+    return Poolakey.getInAppSkuDetails(JSON.stringify(productIds)).then(
+      parseSkuDetails
+    );
   },
   getSubscriptionSkuDetails(productIds: string[]): Promise<SkuDetails[]> {
-    return ReactNativePoolakey.getSubscriptionSkuDetails(
-      JSON.stringify(productIds)
-    ).then(parseSkuDetails);
+    return Poolakey.getSubscriptionSkuDetails(JSON.stringify(productIds)).then(
+      parseSkuDetails
+    );
   },
 };

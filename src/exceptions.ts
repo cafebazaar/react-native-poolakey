@@ -6,25 +6,25 @@ export class DisconnectedError extends Error {}
 export class ItemNotFoundError extends Error {}
 export class BazaarNotFoundError extends Error {}
 
-function makeError(ActuralError: any, e: Error) {
-  const result = new ActuralError(e.message);
-  Object.assign(result, e);
-  return result;
+function createError(ExceptionClass: any, e: Error) {
+  const customException = new ExceptionClass(e.message);
+  Object.assign(customException, e);
+  return customException;
 }
 
 export function praseError(e: Error) {
   if (e.message === 'Item not found') {
-    return makeError(ItemNotFoundError, e);
+    return createError(ItemNotFoundError, e);
   }
 
   if (
     e.message === "We can't communicate with Bazaar: Service is disconnected"
   ) {
-    return makeError(DisconnectedError, e);
+    return createError(DisconnectedError, e);
   }
 
   if (e.message === 'Bazaar is not installed') {
-    return makeError(BazaarNotFoundError, e);
+    return createError(BazaarNotFoundError, e);
   }
 
   return e;

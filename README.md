@@ -1,6 +1,6 @@
 # @cafebazaar/react-native-poolakey
 
-ReactNative In-App Billing SDK for Cafe Bazaar App Store
+ReactNative implementation of CafeBazaar's in-app payment SDK.
 
 ## Installation
 
@@ -22,7 +22,7 @@ import { useBazaar } from '@cafebazaar/react-native-poolakey';
 // ...
 
 function MyComponent() {
-  const bazaar = useBazaar(myInAppBillingKey);
+  const bazaar = useBazaar(RSA_KEY);
   // ...
   const someHandler = async () => {
     const purchaseResult = await bazaar.purchaseProduct(productId);
@@ -42,7 +42,7 @@ import bazaar from '@cafebazaar/react-native-poolakey';
 class MyApp extends React.Component {
   componentDidMount() {
     bazaar
-      .connect(myInAppBillingKey)
+      .connect(YOUR_RSA_KEY)
       .catch(handleError); // bazaar is not installed or what?!
   }
 
