@@ -97,7 +97,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.github.cafebazaar.Poolakey:poolakey:2.1.0"
+  implementation "com.github.cafebazaar.Poolakey:poolakey:2.2.0"
 }
 
 if (isNewArchitectureEnabled()) {
